@@ -1,0 +1,52 @@
+- hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+
+  - name: Determine my public ip
+    command: curl ifconfig.co
+    register: my_ip
+  
+  - name: Create terraform vars (minikube.auto.tfvars)
+    copy:
+      dest: "{{ playbook_dir }}/minikube.auto.tfvars"
+      content: |
+        access_ip = "{{ my_ip.stdout }}/32"
+        key_name  = "osaws"
+
+  - name: Terraform plan
+    terraform:
+        project_path: "{{ playbook_dir }}"
+        state: planned
+        plan_file: minikube.plan
+
+  - name: Terraform apply
+    terraform:
+        project_path: "{{ playbook_dir }}"
+        plan_file: minikube.plan
+    register: tfout
+
+  - set_fact:
+      minikube_dns: "{{ tfout.outputs.instance_public_dns.value }}"
+
+  - debug: var=minikube_dns
+
+  - name: Waiting for minikube is up
+    ping:
+    delegate_to: "{{ minikube_dns }}"
+    register: minikube_up
+    until: minikube_up is succeeded
+    remote_user: ubuntu
+    become: true
+    retries: 10
+    delay: 2
+    ignore_errors: yes
+
+  - name: Install minikube
+    shell: |
+        minikube config set vm-driver none
+        minikube start
+    delegate_to: "{{ minikube_dns }}"
+    remote_user: ubuntu
+    become: true
