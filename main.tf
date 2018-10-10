@@ -51,7 +51,7 @@ module "ec2" {
   instance_count = 1
 
   name                        = "minikube-aws"
-  key_name                    = "${var.key_name}"
+  key_name                    = "minikube-aws"
   ami                         = "${data.aws_ami.ubuntu.id}"
   instance_type               = "${var.instance_type}"
   cpu_credits                 = "unlimited"
@@ -59,4 +59,9 @@ module "ec2" {
   vpc_security_group_ids      = ["${module.security_group.this_security_group_id}"]
   associate_public_ip_address = true
   user_data                   = "${data.template_file.user_data.rendered}"
+}
+
+resource "aws_key_pair" "ec2_pubkey" {
+  key_name   = "minikube-aws"
+  public_key = "${file("${var.ssh_pubkey_path}")}"
 }

@@ -2,8 +2,9 @@ variable "access_ip" {
   description = "IP address to be whitelisted"
 }
 
-variable "key_name" {
-  description = "SSH key name"
+variable "ssh_pubkey_path" {
+  description = "SSH public key path"
+  default     = "~/.ssh/id_rsa.pub"
 }
 
 variable "instance_type" {

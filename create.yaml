@@ -7,13 +7,13 @@
   - name: Determine my public ip
     command: curl ifconfig.co
     register: my_ip
+    check_mode: no
   
   - name: Create terraform vars (minikube.auto.tfvars)
     copy:
       dest: "{{ playbook_dir }}/minikube.auto.tfvars"
       content: |
         access_ip = "{{ my_ip.stdout }}/32"
-        key_name  = "osaws"
 
   - name: Terraform plan
     terraform:

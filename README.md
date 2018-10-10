@@ -3,6 +3,9 @@
 This setup creates ec2 instance that is ready for a single node minikube
 installation.
 
+There's a [Minishift](https://github.com/cloudowski/minishift-aws) version
+available too if you'd like to install single node OpenShift (OKD actually).
+
 # Quickstart
 
 * Initialize terraform
