@@ -32,7 +32,7 @@
 
   - debug: var=minikube_dns
 
-  - name: Waiting for minikube is up
+  - name: Waiting for ec2 to start
     ping:
     delegate_to: "{{ minikube_dns }}"
     register: minikube_up
@@ -43,10 +43,10 @@
     delay: 2
     ignore_errors: yes
 
-  - name: Install minikube
+  - name: Start minikube
     shell: |
         minikube config set vm-driver none
-        minikube start
+        minikube status|grep -q 'minikube: Running' || minikube start
     delegate_to: "{{ minikube_dns }}"
     remote_user: ubuntu
     become: true
