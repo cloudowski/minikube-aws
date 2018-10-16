@@ -21,8 +21,13 @@ terraform init
 ansible-playbook create.yaml
 ```
 
-* Log in to your minikube your ec2 instance - hostname can be found in `terraform output`
-installation
+* Log in to your minikube your ec2 instance - use `kubeconfig.aws` file that's been generated on the server (you can findhostname in `terraform output`) and copied to your host. Now set `KUBECONFIG` and enjoy your minikube!
+
+```
+export KUBECONFIG=kubeconfig.aws
+kubectl cluster-info
+```
+
 
 # Cleaning up
 

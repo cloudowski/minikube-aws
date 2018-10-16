@@ -4,3 +4,4 @@
 *.tfstate*
 *.auto.tfvars
 *.swp
+kubeconfig.aws

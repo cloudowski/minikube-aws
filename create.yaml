@@ -1,6 +1,8 @@
 - hosts: localhost
   connection: local
   gather_facts: false
+  vars:
+    ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
 
   tasks:
 
@@ -39,14 +41,35 @@
     until: minikube_up is succeeded
     remote_user: ubuntu
     become: true
-    retries: 10
-    delay: 2
+    retries: 30
+    delay: 10
     ignore_errors: yes
 
   - name: Start minikube
     shell: |
         minikube config set vm-driver none
-        minikube status|grep -q 'minikube: Running' || minikube start
+        minikube status|grep -q 'minikube: Running' || minikube start --apiserver-names={{ minikube_dns }}
     delegate_to: "{{ minikube_dns }}"
     remote_user: ubuntu
     become: true
+
+  - name: Generate kubeconfig
+    shell: |
+        export KUBECONFIG=/tmp/kubeconfig.aws
+        kubectl config set-cluster minikube --embed-certs --certificate-authority=/root/.minikube/ca.crt --server=https://{{ minikube_dns }}:8443
+        kubectl config set-credentials minikube --embed-certs --client-certificate=/root/.minikube/client.crt --client-key=/root/.minikube/client.key
+        kubectl config set-context minikube --cluster=minikube --user=minikube
+        kubectl config use-context minikube
+    delegate_to: "{{ minikube_dns }}"
+    remote_user: ubuntu
+    become: true
+
+  - name: Copy kubeconfig
+    fetch:
+        src: /tmp/kubeconfig.aws
+        dest: ./kubeconfig.aws
+        flat: true
+    delegate_to: "{{ minikube_dns }}"
+    remote_user: ubuntu
+    become: true
+
