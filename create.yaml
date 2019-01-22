@@ -49,6 +49,8 @@
     shell: |
         minikube config set vm-driver none
         minikube status|grep -q 'minikube: Running' || minikube start --apiserver-names={{ minikube_dns }}
+        # enable some addons
+        minikube addons enable ingress
     delegate_to: "{{ minikube_dns }}"
     remote_user: ubuntu
     become: true
