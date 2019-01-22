@@ -28,6 +28,11 @@ output "instance_public_dns" {
   value       = "${module.ec2.public_dns[0]}"
 }
 
+output "instance_public_ip" {
+  description = "Public ip name assigned to the EC2 instance"
+  value       = "${module.ec2.public_ip}"
+}
+
 output "credit_specification" {
   description = "Credit specification of EC2 instance (empty list for not t2 instance types)"
   value       = "${module.ec2.credit_specification}"
