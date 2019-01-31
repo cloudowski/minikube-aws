@@ -35,6 +35,19 @@ export KUBECONFIG=kubeconfig.aws
 kubectl cluster-info
 ```
 
+# Additional configuration
+
+Adding extra parameters to terraform requires re-apply and potentially will
+destroy your instance. It is recommended to do it before creating your minikube
+instance.
+
+## Adding more space
+
+Just add a variable to terraform, for example to add 5Gi:
+
+```
+echo 'instance_extra_ebs_size = "5"' > extra-ebs.auto.tfvars
+```
 
 # Cleaning up
 

@@ -10,3 +10,8 @@ variable "ssh_pubkey_path" {
 variable "instance_type" {
   default = "t3.medium"
 }
+
+variable "instance_extra_ebs_size" {
+  description = "Extra storage attached to instance"
+  default     = "0"
+}

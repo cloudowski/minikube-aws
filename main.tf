@@ -65,3 +65,16 @@ resource "aws_key_pair" "ec2_pubkey" {
   key_name   = "minikube-aws"
   public_key = "${file("${var.ssh_pubkey_path}")}"
 }
+
+resource "aws_volume_attachment" "this_ec2" {
+  count       = "${var.instance_extra_ebs_size > 0 ? 1 : 0}"
+  device_name = "/dev/sdh"
+  volume_id   = "${aws_ebs_volume.this.id}"
+  instance_id = "${module.ec2.id[0]}"
+}
+
+resource "aws_ebs_volume" "this" {
+  count             = "${var.instance_extra_ebs_size > 0 ? 1 : 0}"
+  availability_zone = "${module.ec2.availability_zone[0]}"
+  size              = "${var.instance_extra_ebs_size}"
+}
