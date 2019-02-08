@@ -35,15 +35,7 @@
   - debug: var=minikube_dns
 
   - name: Waiting for ec2 to start
-    ping:
-    delegate_to: "{{ minikube_dns }}"
-    register: minikube_up
-    until: minikube_up is succeeded
-    remote_user: ubuntu
-    become: true
-    retries: 30
-    delay: 10
-    ignore_errors: yes
+    wait_for: host="{{ minikube_dns }}" port=22 delay=10  timeout=300
 
   - name: Start minikube
     shell: |
@@ -54,6 +46,10 @@
     delegate_to: "{{ minikube_dns }}"
     remote_user: ubuntu
     become: true
+    register: minikube_start
+    until: minikube_start is succeeded
+    retries: 30
+    delay: 5
 
   - name: Generate kubeconfig
     shell: |
