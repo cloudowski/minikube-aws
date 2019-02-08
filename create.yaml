@@ -35,12 +35,13 @@
   - debug: var=minikube_dns
 
   - name: Waiting for ec2 to start
-    wait_for: host="{{ minikube_dns }}" port=22 delay=10  timeout=300
+    wait_for: host="{{ minikube_dns }}" port=22 delay=3 timeout=300
 
   - name: Start minikube
     shell: |
         minikube config set vm-driver none
-        minikube status|grep -q 'minikube: Running' || minikube start --apiserver-names={{ minikube_dns }}
+        minikube status|grep -q 'minikube: Running' && exit 0
+        minikube start --apiserver-names={{ minikube_dns }}
         # enable some addons
         minikube addons enable ingress
     delegate_to: "{{ minikube_dns }}"
@@ -48,8 +49,8 @@
     become: true
     register: minikube_start
     until: minikube_start is succeeded
-    retries: 30
-    delay: 5
+    retries: 90
+    delay: 2
 
   - name: Generate kubeconfig
     shell: |
@@ -70,4 +71,16 @@
     delegate_to: "{{ minikube_dns }}"
     remote_user: ubuntu
     become: true
+
+  - name: Display connection instructions
+    vars:
+        msg: |
+            Now configure your kubectl in order to access your minikube instance:"],
+            
+            export KUBECONFIG={{ playbook_dir }}/kubeconfig.aws
+           
+    debug:
+        msg: "{{ msg.split('\n') }}"
+
+
 
