@@ -37,10 +37,12 @@ instance.
 
 ## Adding more space
 
-Just add a variable to terraform, for example to add 5Gi:
+### Root device
+
+Just add a variable to terraform, for example to increase it to 20Gi:
 
 ```
-echo 'instance_extra_ebs_size = "5"' > extra-ebs.auto.tfvars
+echo 'root_block_size = "20"' > root-dev-ebs.auto.tfvars
 ```
 
 # Cleaning up
