@@ -15,3 +15,8 @@ variable "instance_extra_ebs_size" {
   description = "Extra storage attached to instance"
   default     = "0"
 }
+
+variable "root_block_size" {
+  description = "Root block device size"
+  default     = "10"
+}

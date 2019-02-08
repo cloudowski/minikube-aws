@@ -59,6 +59,10 @@ module "ec2" {
   vpc_security_group_ids      = ["${module.security_group.this_security_group_id}"]
   associate_public_ip_address = true
   user_data                   = "${data.template_file.user_data.rendered}"
+
+  root_block_device = [{
+    volume_size = "${var.root_block_size}"
+  }]
 }
 
 resource "aws_key_pair" "ec2_pubkey" {

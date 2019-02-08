@@ -39,6 +39,7 @@
 
   - name: Start minikube
     shell: |
+        set -e
         minikube config set vm-driver none
         minikube status|grep -q 'minikube: Running' && exit 0
         minikube start --apiserver-names={{ minikube_dns }}
@@ -51,6 +52,18 @@
     until: minikube_start is succeeded
     retries: 90
     delay: 2
+
+  - name: Wait for apiserver to start
+    shell: |
+        minikube status --format "{{ '{{' }}.ApiServer{{ '}}' }}"|grep -q Running
+    delegate_to: "{{ minikube_dns }}"
+    remote_user: ubuntu
+    become: true
+    register: apiserver_status
+    until: apiserver_status is succeeded
+    retries: 150
+    delay: 2
+
 
   - name: Generate kubeconfig
     shell: |
