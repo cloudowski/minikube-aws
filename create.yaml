@@ -41,7 +41,7 @@
     shell: |
         set -e
         minikube config set vm-driver none
-        minikube status|grep -q 'minikube: Running' && exit 0
+        minikube status|grep -q 'host: Running' && exit 0
         minikube start --apiserver-names={{ minikube_dns }}
         # enable some addons
         minikube addons enable ingress
